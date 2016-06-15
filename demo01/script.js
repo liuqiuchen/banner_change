@@ -12,6 +12,7 @@ window.onload = function () {
      */
     function animate(offset) {
         var newLeft = parseInt(list.style.left) + offset;
+
         list.style.left = newLeft + 'px';
 
         // 两个if语句实现了无限滚动
@@ -59,6 +60,26 @@ window.onload = function () {
 
         animate(600);
     };
+
+    /**
+     * 点击小圆点切换焦点图
+     */
+    for(var i = 0;i < buttons.length;i++) {
+        buttons[i].onclick = function () {
+            if(this.className == 'on') {
+                return; // 后面的语句不会再执行了，一直到buttonCtrl()都不会再执行
+            }
+            var myIndex = this.getAttribute('index');
+            var offset = -600 * (myIndex - index);
+            animate(offset);
+
+            // index 更新到最新
+            index = myIndex;
+
+            // 小圆点变成橙色
+            buttonsCtrl();
+        };
+    }
 };
 
 
