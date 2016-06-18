@@ -5,23 +5,70 @@ window.onload = function () {
     var prev = document.getElementById('prev');
     var next = document.getElementById('next');
     var index = 1;
+    var autoTimer = null;
 
     /**
      * 左右切换函数
      * @param offset 左右的偏移量
      */
+    var offsetL = 0;
     function animate(offset) {
-        var newLeft = parseInt(list.style.left) + offset;
+        var oldLeft = parseInt(list.style.left);
+        var newLeft = oldLeft + offset;
+        offsetL = oldLeft;
+        var interval = null;
+        var intervalNum = 10;
 
-        list.style.left = newLeft + 'px';
+        //console.log('offsetL: ' + offsetL);
+        //console.log('newLeft: ' + newLeft);
 
-        // 两个if语句实现了无限滚动
-        if(newLeft > -600) {
-            list.style.left = -3000 + 'px';
+        // 向左切换动画
+        if((offset > 0) && (offsetL < newLeft)) {
+            //console.log('左');
+            interval = setInterval(function () {
+                offsetL += offset/(300/intervalNum); // 300为移动的总时间
+
+                //console.log(offsetL);
+
+                list.style.left = offsetL + 'px';
+
+                if(offsetL == newLeft) {
+                    clearInterval(interval);
+
+                    // 两个if语句实现了无限滚动
+                    if(newLeft > -600) {
+                        list.style.left = -3000 + 'px';
+                    }
+
+                    if(newLeft < -3000) {
+                        list.style.left = -600 + 'px';
+                    }
+                }
+            }, intervalNum);
         }
 
-        if(newLeft < -3000) {
-            list.style.left = -600 + 'px';
+        // 向右切换动画
+        if((offset < 0) && (offsetL > newLeft)) {
+            //console.log('右');
+            interval = setInterval(function () {
+                offsetL -= -offset/(300/intervalNum); // 300为移动的总时间
+
+                //console.log(offsetL);
+
+                list.style.left = offsetL + 'px';
+
+                if(offsetL == newLeft) {
+                    clearInterval(interval);
+                    // 两个if语句实现了无限滚动
+                    if(newLeft > -600) {
+                        list.style.left = -3000 + 'px';
+                    }
+
+                    if(newLeft < -3000) {
+                        list.style.left = -600 + 'px';
+                    }
+                }
+            }, intervalNum);
         }
     }
 
@@ -37,6 +84,26 @@ window.onload = function () {
         buttons[index - 1].className = 'on';
     }
 
+    /**
+     * 自动切换功能
+     */
+    function autoPlay() {
+        autoTimer = setInterval(function () {
+            next.onclick();
+        }, 3000);
+    }
+
+    /**
+     * 停止自动切换功能
+     */
+    function autoStop() {
+        clearInterval(autoTimer);
+    }
+
+    // 自动切换
+    autoPlay();
+    container.onmouseover = autoStop;
+    container.onmouseout = autoPlay;
 
     // 左右切换的功能
     next.onclick = function () {
